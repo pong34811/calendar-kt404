@@ -1,6 +1,6 @@
 import React from 'react';
-import { Table, Tag, Typography, Space } from 'antd';
-import { PlayCircleOutlined, EyeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { Table, Tag, Typography, Space, Progress } from 'antd';
+import { PlayCircleFilled, EyeFilled, CalendarFilled, ThunderboltFilled, VideoCameraFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -11,95 +11,101 @@ const { Text, Link } = Typography;
 const VideoTable = ({ data, loading }) => {
     const columns = [
         {
-            title: 'Type',
-            dataIndex: 'type',
-            key: 'type',
-            width: 100,
-            filters: [
-                { text: 'Video', value: 'Video' },
-                { text: 'Short', value: 'Short' },
-                { text: 'Live', value: 'Live' },
-                { text: 'Upcoming', value: 'Upcoming' },
-            ],
-            onFilter: (value, record) => record.type.indexOf(value) === 0,
-            render: (type) => {
-                let color = 'geekblue';
-                if (type === 'Live') color = 'red';
-                if (type === 'Short') color = 'purple';
-                if (type === 'Upcoming') color = 'orange';
+            title: 'Content Details',
+            key: 'video',
+            render: (_, record) => {
+                const isLive = record.type === 'Live';
+                const isShort = record.type === 'Short';
+                const isUpcoming = record.type === 'Upcoming';
+
                 return (
-                    <Tag color={color} icon={type === 'Live' ? <PlayCircleOutlined spin /> : null}>
-                        {type.toUpperCase()}
-                    </Tag>
+                    <Space size="large" align="start">
+                        <div style={{ position: 'relative', cursor: 'pointer', transition: 'transform 0.2s' }}
+                            className="table-img-container"
+                            onClick={() => window.open(record.link, '_blank')}>
+                            <img
+                                src={record.thumbnail}
+                                alt="thumbnail"
+                                style={{
+                                    width: 140,
+                                    height: 78,
+                                    objectFit: 'cover',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                }}
+                            />
+                            <div style={{
+                                position: 'absolute', bottom: 6, right: 6,
+                                background: isLive ? '#ff4d4f' : 'rgba(0,0,0,0.75)',
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '6px',
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                backdropFilter: 'blur(4px)'
+                            }}>
+                                {isLive ? 'LIVE' : isUpcoming ? 'UPCOMING' : formatDuration(record.seconds)}
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxWidth: 400 }}>
+                            <div style={{ display: 'flex', gap: '6px', marginBottom: 2 }}>
+                                {isLive ? <Tag color="red" icon={<VideoCameraFilled />}>LIVE</Tag> :
+                                    isShort ? <Tag color="purple" icon={<ThunderboltFilled />}>SHORT</Tag> :
+                                        isUpcoming ? <Tag color="orange" icon={<CalendarFilled />}>UPCOMING</Tag> :
+                                            <Tag color="blue" icon={<PlayCircleFilled />}>VIDEO</Tag>}
+                            </div>
+                            <Link href={record.link} target="_blank" style={{
+                                fontSize: 16,
+                                fontWeight: 600,
+                                color: '#1e293b',
+                                lineHeight: 1.4,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                            }} title={record.title}>
+                                {record.title}
+                            </Link>
+                            <Text type="secondary" style={{ fontSize: 12 }}>{record.channelTitle}</Text>
+                        </div>
+                    </Space>
                 );
             },
         },
         {
-            title: 'Video',
-            key: 'video',
-            render: (_, record) => (
-                <Space size="middle" align="start">
-                    <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => window.open(record.link, '_blank')}>
-                        <img
-                            src={record.thumbnail}
-                            alt="thumbnail"
-                            style={{
-                                width: 120,
-                                height: 68,
-                                objectFit: 'cover',
-                                borderRadius: 8,
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                            }}
-                        />
-                        <div style={{
-                            position: 'absolute', bottom: 4, right: 4,
-                            background: 'rgba(0,0,0,0.8)', color: 'white',
-                            padding: '0 4px', borderRadius: 4, fontSize: 10
-                        }}>
-                            {record.type === 'Live' ? 'LIVE' : formatDuration(record.seconds)}
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Link href={record.link} target="_blank" style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.3, marginBottom: 4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={record.title}>
-                            {record.title}
-                        </Link>
-                        <Text type="secondary" style={{ fontSize: 12 }}>{record.channelTitle}</Text>
-                    </div>
-                </Space>
-            ),
-        },
-        {
-            title: 'Views',
-            dataIndex: 'viewCount',
-            key: 'viewCount',
+            title: 'Performance',
+            key: 'performance',
             sorter: (a, b) => parseInt(a.viewCount || 0) - parseInt(b.viewCount || 0),
-            render: (views) => (
-                <Space>
-                    <EyeOutlined style={{ color: '#8c8c8c' }} />
-                    <Text>{parseInt(views || 0).toLocaleString()}</Text>
+            render: (_, record) => (
+                <Space direction="vertical" size={0}>
+                    <Space style={{ marginBottom: 4 }}>
+                        <EyeFilled style={{ color: '#64748b' }} />
+                        <Text strong style={{ fontSize: 15 }}>{parseInt(record.viewCount || 0).toLocaleString()}</Text>
+                    </Space>
+                    <Text type="secondary" style={{ fontSize: 12 }}>Total Views</Text>
                 </Space>
             ),
-            width: 140,
+            width: 180,
             responsive: ['md'],
         },
         {
-            title: 'Published',
+            title: 'Publishing Date',
             dataIndex: 'publishedAt',
             key: 'publishedAt',
             defaultSortOrder: 'descend',
             sorter: (a, b) => dayjs(a.publishedAt).unix() - dayjs(b.publishedAt).unix(),
             render: (date) => (
                 <Space direction="vertical" size={0}>
-                    <Space>
-                        <CalendarOutlined style={{ color: '#ff4d4f' }} />
-                        <Text strong>{dayjs(date).fromNow()}</Text>
+                    <Space style={{ marginBottom: 4 }}>
+                        <CalendarFilled style={{ color: '#ff4d4f' }} />
+                        <Text strong style={{ fontSize: 14 }}>{dayjs(date).fromNow()}</Text>
                     </Space>
-                    <Text type="secondary" style={{ fontSize: 11 }}>
-                        {dayjs(date).format('DD/MM/YYYY HH:mm')}
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                        {dayjs(date).format('MMM DD, YYYY • HH:mm')}
                     </Text>
                 </Space>
             ),
-            width: 180,
+            width: 200,
             responsive: ['lg'],
         },
     ];
@@ -110,14 +116,18 @@ const VideoTable = ({ data, loading }) => {
             dataSource={data}
             rowKey="id"
             loading={loading}
-            pagination={{ pageSize: 8 }}
+            pagination={{
+                pageSize: 7,
+                showSizeChanger: false,
+                style: { paddingRight: 24, paddingBottom: 16 }
+            }}
+            style={{ background: '#fff' }}
         />
     );
 };
 
-// Helper for duration display (mm:ss or hh:mm:ss)
 function formatDuration(seconds) {
-    if (!seconds) return '';
+    if (!seconds) return '0:00';
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
