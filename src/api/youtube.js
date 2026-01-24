@@ -95,6 +95,7 @@ export const fetchVideos = async () => {
             if (isLive) type = 'Live';
             else if (isUpcoming) type = 'Upcoming';
             else if (totalSeconds > 0 && totalSeconds <= 60) type = 'Short';
+            else if (item.liveStreamingDetails) type = 'Stream';
 
             return {
                 id: item.id,

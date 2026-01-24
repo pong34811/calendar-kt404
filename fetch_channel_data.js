@@ -2,6 +2,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
+import { fetchVideos } from './src/api/youtube.js';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -44,9 +45,26 @@ async function getChannelInfo() {
         console.log('\n--- Raw Data (truncated) ---');
         console.log(JSON.stringify(channel, null, 2));
 
+
+
     } catch (error) {
         console.error('Error fetching channel data:', error.response ? error.response.data : error.message);
     }
 }
 
+async function testFetch() {
+    console.log('Fetching videos...');
+    try {
+        const videos = await fetchVideos();
+        console.log('\n--- Video Details (Verified) ---');
+        videos.forEach(v => {
+            console.log(`[${v.type}] ${v.title} (${dayjs(v.publishedAt).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')})`);
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 getChannelInfo();
+testFetch();
+

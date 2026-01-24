@@ -21,6 +21,7 @@ const VideoTable = ({ data, loading }) => {
                 const isLive = record.type === 'Live';
                 const isShort = record.type === 'Short';
                 const isUpcoming = record.type === 'Upcoming';
+                const isStream = record.type === 'Stream';
 
                 return (
                     <Space size="large" align="start">
@@ -56,7 +57,8 @@ const VideoTable = ({ data, loading }) => {
                                 {isLive ? <Tag color="red" icon={<VideoCameraFilled />}>LIVE</Tag> :
                                     isShort ? <Tag color="purple" icon={<ThunderboltFilled />}>SHORT</Tag> :
                                         isUpcoming ? <Tag color="orange" icon={<CalendarFilled />}>UPCOMING</Tag> :
-                                            <Tag color="blue" icon={<PlayCircleFilled />}>VIDEO</Tag>}
+                                            isStream ? <Tag color="cyan" icon={<VideoCameraFilled />}>STREAM</Tag> :
+                                                <Tag color="blue" icon={<PlayCircleFilled />}>VIDEO</Tag>}
                             </div>
                             <Link href={record.link} target="_blank" style={{
                                 fontSize: 16,

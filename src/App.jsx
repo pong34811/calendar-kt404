@@ -71,6 +71,12 @@ const App = () => {
         icon: <ClockCircleFilled style={{ color: '#fa8c16' }} />,
         tag: 'orange'
       };
+      case 'Stream': return {
+        bg: '#e6fffb',
+        border: '#87e8de',
+        icon: <VideoCameraFilled style={{ color: '#13c2c2' }} />,
+        tag: 'cyan'
+      };
       default: return {
         bg: '#e6f7ff',
         border: '#91d5ff',
