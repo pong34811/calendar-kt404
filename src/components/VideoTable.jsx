@@ -3,8 +3,12 @@ import { Table, Tag, Typography, Space, Progress } from 'antd';
 import { PlayCircleFilled, EyeFilled, CalendarFilled, ThunderboltFilled, VideoCameraFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const { Text, Link } = Typography;
 
@@ -93,15 +97,15 @@ const VideoTable = ({ data, loading }) => {
             dataIndex: 'publishedAt',
             key: 'publishedAt',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => dayjs(a.publishedAt).unix() - dayjs(b.publishedAt).unix(),
+            sorter: (a, b) => dayjs.tz(a.publishedAt, 'Asia/Bangkok').unix() - dayjs.tz(b.publishedAt, 'Asia/Bangkok').unix(),
             render: (date) => (
                 <Space direction="vertical" size={0}>
                     <Space style={{ marginBottom: 4 }}>
                         <CalendarFilled style={{ color: '#ff4d4f' }} />
-                        <Text strong style={{ fontSize: 14 }}>{dayjs(date).fromNow()}</Text>
+                        <Text strong style={{ fontSize: 14 }}>{dayjs.tz(date, 'Asia/Bangkok').fromNow()}</Text>
                     </Space>
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                        {dayjs(date).format('MMM DD, YYYY • HH:mm')}
+                        {dayjs.tz(date, 'Asia/Bangkok').format('MMM DD, YYYY • HH:mm')}
                     </Text>
                 </Space>
             ),

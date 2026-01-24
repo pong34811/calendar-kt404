@@ -12,6 +12,11 @@ import {
 } from '@ant-design/icons';
 import VideoTable from './components/VideoTable';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -43,7 +48,7 @@ const App = () => {
 
   const getListData = (value) => {
     const dateString = value.format('YYYY-MM-DD');
-    return data.filter(item => dayjs(item.publishedAt).format('YYYY-MM-DD') === dateString);
+    return data.filter(item => dayjs.tz(item.publishedAt, 'Asia/Bangkok').format('YYYY-MM-DD') === dateString);
   };
 
   const getCardStyle = (type) => {
@@ -88,7 +93,7 @@ const App = () => {
                 <div style={{ padding: '4px' }}>
                   <div style={{ fontWeight: 600, marginBottom: 4 }}>{item.title}</div>
                   <div style={{ fontSize: '11px', opacity: 0.8 }}>
-                    {dayjs(item.publishedAt).format('HH:mm A')} • {item.viewCount ? parseInt(item.viewCount).toLocaleString() + ' views' : 'Upcoming'}
+                    {dayjs.tz(item.publishedAt, 'Asia/Bangkok').format('HH:mm A')} • {item.viewCount ? parseInt(item.viewCount).toLocaleString() + ' views' : 'Upcoming'}
                   </div>
                 </div>
               }
@@ -125,7 +130,7 @@ const App = () => {
                       {item.type.toUpperCase()}
                     </Tag>
                     <Text type="secondary" style={{ fontSize: '9px', fontWeight: 500 }}>
-                      {dayjs(item.publishedAt).format('HH:mm')}
+                      {dayjs.tz(item.publishedAt, 'Asia/Bangkok').format('HH:mm')}
                     </Text>
                   </div>
                 </div>

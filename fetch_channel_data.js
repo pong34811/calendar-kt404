@@ -1,4 +1,10 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const API_KEY = 'AIzaSyAbREclgeyXQkGpy9-JABmY_Cdb34J8cVU';
 const CHANNEL_ID = 'UCXT92S422lAnfBfsPrxpEFw';
@@ -24,9 +30,9 @@ async function getChannelInfo() {
         console.log(`Title: ${channel.snippet.title}`);
         console.log(`Description: ${channel.snippet.description}`);
         console.log(`Custom URL: ${channel.snippet.customUrl}`);
-        console.log(`Published At: ${channel.snippet.publishedAt}`);
+        console.log(`Published At: ${dayjs(channel.snippet.publishedAt).add(6, 'hour').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')}`);
         console.log(`Country: ${channel.snippet.country}`);
-        
+
         console.log('\n--- Statistics ---');
         console.log(`Subscriber Count: ${channel.statistics.subscriberCount}`);
         console.log(`Video Count: ${channel.statistics.videoCount}`);
@@ -34,7 +40,7 @@ async function getChannelInfo() {
 
         console.log('\n--- Branding ---');
         console.log(`Keywords: ${channel.brandingSettings?.channel?.keywords}`);
-        
+
         console.log('\n--- Raw Data (truncated) ---');
         console.log(JSON.stringify(channel, null, 2));
 

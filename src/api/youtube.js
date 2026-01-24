@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 const API_KEY = 'AIzaSyAbREclgeyXQkGpy9-JABmY_Cdb34J8cVU';
 const BASE_URL = 'https://www.googleapis.com/youtube/v3';
@@ -100,14 +101,14 @@ export const fetchVideos = async () => {
                 title: item.snippet.title,
                 thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url,
                 channelTitle: item.snippet.channelTitle,
-                publishedAt: item.snippet.publishedAt,
+                publishedAt: dayjs(item.snippet.publishedAt).add(-6, 'hour').toISOString(),
                 viewCount: item.statistics.viewCount,
                 duration: duration,
                 seconds: totalSeconds,
                 type: type,
                 link: `https://www.youtube.com/watch?v=${item.id}`
             };
-        }).sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+        }).sort((a, b) => dayjs(b.publishedAt).diff(dayjs(a.publishedAt)));
 
     } catch (error) {
         console.error("Error fetching YouTube data", error);
