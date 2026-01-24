@@ -21,6 +21,8 @@ async function getChannelInfo() {
             }
         });
 
+        console.log(response.data);
+
         const channel = response.data.items[0];
         if (!channel) {
             console.log('Channel not found.');
@@ -56,15 +58,20 @@ async function testFetch() {
     console.log('Fetching videos...');
     try {
         const videos = await fetchVideos();
-        console.log('\n--- Video Details (Verified) ---');
+        const fs = await import('fs');
+        let output = '';
         videos.forEach(v => {
-            console.log(`[${v.type}] ${v.title} (${dayjs(v.publishedAt).tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')})`);
+            if (v.id === '4AE5AV-LbI0' || v.id === 'M083t0Wv_5M') {
+                console.log(`ID: ${v.id} | Resolved Type: [${v.type}] | Title: "${v.title}"`);
+            }
         });
+        fs.writeFileSync('debug_videos_v2.txt', output);
+        console.log('Written to debug_videos_v2.txt');
     } catch (e) {
         console.error(e);
     }
 }
 
-getChannelInfo();
+// getChannelInfo();
 testFetch();
 

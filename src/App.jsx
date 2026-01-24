@@ -11,6 +11,7 @@ import {
   ThunderboltFilled
 } from '@ant-design/icons';
 import VideoTable from './components/VideoTable';
+import Dashboard from './components/Dashboard';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -24,7 +25,7 @@ const { Title, Text } = Typography;
 const App = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [view, setView] = useState('table');
+  const [view, setView] = useState('dashboard');
 
   const fetchData = async () => {
     setLoading(true);
@@ -198,6 +199,7 @@ const App = () => {
 
           <Segmented
             options={[
+              { label: 'Dashboard', value: 'dashboard', icon: <ThunderboltFilled /> },
               { label: 'Table List', value: 'table', icon: <TableOutlined /> },
               { label: 'Calendar', value: 'calendar', icon: <CalendarOutlined /> },
             ]}
@@ -220,6 +222,8 @@ const App = () => {
                 style={{ background: 'transparent' }}
               />
             </Card>
+          ) : view === 'dashboard' ? (
+            <Dashboard data={data} />
           ) : (
             <Card
               bordered={false}

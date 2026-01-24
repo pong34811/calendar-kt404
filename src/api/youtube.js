@@ -92,21 +92,24 @@ export const fetchVideos = async () => {
             const totalSeconds = parseDuration(duration);
 
             let type = 'Video';
-            if (isLive) type = 'Live';
-            else if (isUpcoming) type = 'Upcoming';
-            else if (totalSeconds > 0 && totalSeconds <= 60) type = 'Short';
+            if (item.snippet.liveBroadcastContent === 'live') type = 'Live';
+            else if (item.snippet.liveBroadcastContent === 'upcoming') type = 'Upcoming';
+            else if (totalSeconds > 0 && totalSeconds <= 60 && item.snippet.title.includes('#')) type = 'Short';
             else if (item.liveStreamingDetails) type = 'Stream';
-
+            else type = 'Video';
             return {
                 id: item.id,
                 title: item.snippet.title,
                 thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url,
                 channelTitle: item.snippet.channelTitle,
-                publishedAt: dayjs(item.snippet.publishedAt).add(-6, 'hour').toISOString(),
+                publishedAt: dayjs(item.snippet.publishedAt).add(6, 'hour').toISOString(),
                 viewCount: item.statistics.viewCount,
                 duration: duration,
                 seconds: totalSeconds,
                 type: type,
+                tags: item.snippet.tags,
+                description: item.snippet.description,
+                thumbnail_obj: item.snippet.thumbnails,
                 link: `https://www.youtube.com/watch?v=${item.id}`
             };
         }).sort((a, b) => dayjs(b.publishedAt).diff(dayjs(a.publishedAt)));
