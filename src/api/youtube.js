@@ -102,7 +102,7 @@ export const fetchVideos = async () => {
                 title: item.snippet.title,
                 thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url,
                 channelTitle: item.snippet.channelTitle,
-                publishedAt: dayjs(item.snippet.publishedAt).add(6, 'hour').toISOString(),
+                publishedAt: dayjs(item.snippet.publishedAt).add(-6, 'hour').toISOString(),
                 viewCount: item.statistics.viewCount,
                 duration: duration,
                 seconds: totalSeconds,
